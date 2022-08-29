@@ -4,18 +4,19 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"os"
 
 	_ "github.com/lib/pq"
 )
 
 func connect() *sql.DB {
-	connStr := "postgresql://postgres:secret@localhost:5432/entry?sslmode=disable"
-
-	// Connect to database
-	db, _ := sql.Open("postgres", connStr)
+	db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
+	if err != nil {
+		log.Fatal(err)
+	}
 	// Initialize the first connection to the database, to see if everything works correctly.
 	// Make sure to check the error.
-	err := db.Ping()
+	err = db.Ping()
 	if err != nil {
 		log.Fatal(err)
 	}
