@@ -32,7 +32,16 @@ func Update(val string, id1 int) {
 func Index() *sql.Rows {
 	db := connect()
 	defer db.Close()
-	rows, err := db.Query("Select * from entryval")
+	rows, err := db.Query(`CREATE TABLE IF NOT EXISTS entryval
+	(
+		id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+		entryval text COLLATE pg_catalog."default",
+		CONSTRAINT entryval_pkey PRIMARY KEY (id)
+	)`)
+	if err != nil {
+		log.Fatalf("An error occured while executing query: %v", err)
+	}
+	rows, err = db.Query("Select * from entryval")
 	if err != nil {
 		log.Fatalf("An error occured while executing query: %v", err)
 	}
